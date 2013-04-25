@@ -138,32 +138,26 @@ if options.verbose == True:
 if res == "badauth":
  print "Incorrent username/password"
  sys.exit(2)
-
-if res == "good":
+elif res == "good":
  if options.verbose == True:
   print "IP-address updated"
  sys.exit(0)
-
-if res == "nochg":
+elif res == "nochg":
  if options.verbose == True:
   print "No change"
  sys.exit(0)
-
-if res == "nofqdn":
+elif res == "nofqdn":
  print "The hostname specified is not a fully-qualified domain name (not in the form hostname.dyndns.org or domain.com)."
  sys.exit(5)
-
-if res == "nohost":
+elif res == "nohost":
  print "The hostname specified does not exist in this user account (or is not in the service specified in the system parameter)."
  sys.exit(5)
-
-if res == "numhost":
+elif res == "numhost":
  print "Too many hosts (more than 20) specified in an update. Also returned if trying to update a round robin (which is not allowed)."
  sys.exit(5)
-
-if res == "abuse":
+elif res == "abuse":
  print "The hostname specified is blocked for update abuse."
  sys.exit(5)
-
-print "Unknown result code:", res
-sys.exit(1)
+else:
+ print "Unknown result code:", res
+ sys.exit(1)
