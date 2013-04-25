@@ -1,0 +1,1 @@
+../script/loopia_dyndns.py
