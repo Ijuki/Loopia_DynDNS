@@ -11,10 +11,9 @@ parser.add_option("-v", action="store_true", dest="verbose", default=False, help
 parser.add_option("-m", "--manual_ip", dest="manual_ip", default=False, help="Manually set IP, if unset dynamically fetch IP")
 parser.add_option("-d", "--host", dest="hostname", default="unset", help="Hostname to configure")
 parser.add_option("-u", "--user", dest="username", default="unset", help="Username for loopia.se")
-parser.add_option("-p", "--password", dest="password", default="unset", help="Password for loopia.se")
+parser.add_option("-p", "--password", dest="password", default="unset", help="Password for loopia.se") 
 parser.add_option("-c", "--config", dest="config", default="unset", help="Configuration File")
 parser.add_option("-s", "--save-config", dest="savefile", default="unset", help="Save configuration to file")
-
 (options, args) = parser.parse_args()
 
 if options.username == "unset" and options.config == "unset":
@@ -36,9 +35,9 @@ if options.config != "unset":
  config.read(options.config)
 
  if options.verbose == True:
-  print "Hostname: ", config.get("LoopiaDNS", "hostname")
-  print "Username: ", config.get("LoopiaDNS", "username")
-  print "Password: ", config.get("LoopiaDNS", "password")
+  print "Hostname:", config.get("LoopiaDNS", "hostname")
+  print "Username:", config.get("LoopiaDNS", "username")
+  print "Password:", config.get("LoopiaDNS", "password")
 
  if options.hostname != "unset":
   if options.verbose == True:
@@ -51,27 +50,39 @@ if options.config != "unset":
    print "Passed username has precedence, setting username to:", options.username
  else:
   options.username = config.get("LoopiaDNS", "username")
-
+  
  if options.password != "unset":
   if options.verbose == True:
-   print "Passed password has precedence, setting password to:", otpions.password
+   print "Passed password has precedence, setting password to:", options.password
  else:
   options.password = config.get("LoopiaDNS", "password")
+
+ if options.manual_ip != False:
+  if options.verbose == True:
+   print "Passed manual ip has precedence, setting manual ip:", options.manual_ip
+ else:
+  try:
+   config.get('LoopiaDNS', 'manual_ip')
+  except ConfigParser.NoOptionError:
+   pass
+  else:
+   if options.verbose == True:
+    options.manual_ip = config.get('LoopiaDNS', 'manual_ip')
 
 authstring = base64.encodestring('%s:%s' % (options.username, options.password)).replace('\n', '')
 
 if options.savefile != "unset":
  print "Saving configuration to file:", options.savefile
- saveconfig = ConfigParser.RawConfigParser()
+ saveconfig = ConfigParser.ConfigParser()
  saveconfig.add_section('LoopiaDNS')
  saveconfig.set('LoopiaDNS', 'hostname', options.hostname)
  saveconfig.set('LoopiaDNS', 'username', options.username)
  saveconfig.set('LoopiaDNS', 'password', options.password)
+ if options.manual_ip != "unset":
+  saveconfig.set('LoopiaDNS', 'manual_ip', options.manual_ip)
 
  with open(options.savefile, 'wb') as configfile:
   saveconfig.write(configfile)
-
- print "Saved config"
  sys.exit(1)
 
 if options.manual_ip == False:
@@ -94,7 +105,8 @@ if options.manual_ip == False:
   print "IP-adress: " + ipaddress
  ip=ipaddress
 else:
- print "User specified IP-adress: " + options.manual_ip
+ if options.verbose == True:
+  print "User specified IP-adress: " + options.manual_ip
  ip=options.manual_ip
 
 auth = base64.encodestring('%s:%s' % (options.username, options.password)).replace('\n', '')
