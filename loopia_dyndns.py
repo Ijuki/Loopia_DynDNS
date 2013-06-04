@@ -136,7 +136,7 @@ if options.verbose == True:
  print res
 
 if res == "badauth":
- print "Incorrent username/password"
+ print "Incorrect username/password"
  sys.exit(2)
 elif res == "good":
  if options.verbose == True:
